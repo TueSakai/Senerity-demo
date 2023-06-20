@@ -7,22 +7,23 @@ import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.http.Method;
-import io.restassured.internal.mapping.JsonbMapper;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.json.simple.JSONObject;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Step {
+    @Test
     @Given("GET demo request 1")
     public void GET_request_1() {
         RestAssured.baseURI = "https://reqres.in/api/user?page=2";
-        RequestSpecification httpRequest = RestAssured.given();
-        Response response = httpRequest.request(Method.GET);
+        Response response = RestAssured
+                .given()
+                .when()
+                    .get()
+                .then()
+                    .extract().response();
         JsonPath jsonPath = new JsonPath(response.getBody().asString());
         jsonPath.prettyPrint();
 
