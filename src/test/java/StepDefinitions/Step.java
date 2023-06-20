@@ -1,17 +1,18 @@
 package StepDefinitions;
 
-import com.google.gson.JsonObject;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import net.serenitybdd.core.Serenity;
 import net.serenitybdd.rest.RestRequests;
-import net.serenitybdd.rest.SerenityRest;
 import org.json.simple.JSONObject;
+import org.junit.Assert;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import org.junit.Test;
 
 public class Step {
@@ -25,13 +26,13 @@ public class Step {
                     .get()
                 .then()
                     .extract().response();
-
-        Serenity.setSessionVariable("response").to(response);
+        Serenity.throwExceptionsImmediately();
         JsonPath jsonPath = new JsonPath(response.getBody().asString());
         jsonPath.prettyPrint();
 
     }
 
+    @Test
     @When("POST demo request 1")
     public void POST_request_1() {
 //        RestAssured.baseURI = "https://reqres.in/api/users";
@@ -57,10 +58,22 @@ public class Step {
                 .then()
                     .statusCode(201)
                     .extract().response();
-
+        Serenity.throwExceptionsImmediately();
         JsonPath jsonPath = new JsonPath(response.getBody().asString());
         jsonPath.prettyPrint();
+        try {
+            Assert.assertEquals(jsonPath.get("name"),"Nittin");
+            assertThat(jsonPath.get("job"),is("Test enginner"));
+            Serenity.done();
+            System.out.println("__________________PASS__________________");
+        }
+
+        catch (Exception | AssertionError e){
+            Serenity.throwExceptionsImmediately();
+            System.out.println("__________________FALSE__________________\n\n"+e);
+        }
     }
+    @Test
     @Then("POST demo request 2")
     public void POST_request_2() {
 //        JsonObject requestBody = new JsonObject();
@@ -80,10 +93,18 @@ public class Step {
                     .statusCode(400)
                     .extract().response()
                 ;
-
         String responseBody = response.getBody().asString();
         JsonPath jsonPath = new JsonPath(responseBody);
         jsonPath.prettyPrint();
+        try {
+            Assert.assertEquals(jsonPath.get("error"),"Missing password");
+            assertThat(jsonPath.get("error"),is("Mising password"));
+            System.out.println("__________________Pass__________________");
+        }
+
+        catch (Exception | AssertionError e){
+            System.out.println("__________________False__________________\n\n"+e);
+        }
     }
 
 }
