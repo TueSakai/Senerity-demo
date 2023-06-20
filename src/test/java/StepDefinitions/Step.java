@@ -6,10 +6,11 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import io.restassured.http.Method;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
-import io.restassured.specification.RequestSpecification;
+import net.serenitybdd.core.Serenity;
+import net.serenitybdd.rest.RestRequests;
+import net.serenitybdd.rest.SerenityRest;
 import org.json.simple.JSONObject;
 import org.junit.Test;
 
@@ -17,13 +18,15 @@ public class Step {
     @Test
     @Given("GET demo request 1")
     public void GET_request_1() {
-        RestAssured.baseURI = "https://reqres.in/api/user?page=2";
-        Response response = RestAssured
+        Response response = RestRequests
                 .given()
+                .baseUri("https://reqres.in").basePath("/api/user?page=2")
                 .when()
                     .get()
                 .then()
                     .extract().response();
+
+        Serenity.setSessionVariable("response").to(response);
         JsonPath jsonPath = new JsonPath(response.getBody().asString());
         jsonPath.prettyPrint();
 
@@ -43,7 +46,7 @@ public class Step {
         request.put("name","Nittin");
         request.put("job","Test enginner");
 
-        Response response = RestAssured
+        Response response = RestRequests
                 .given()
                     .baseUri("https://reqres.in").basePath("/api/users")
                     .contentType(ContentType.JSON)
@@ -66,7 +69,7 @@ public class Step {
         JSONObject request = new JSONObject();
         request.put("email","Nitin@gmail.com");
 
-        Response response = RestAssured
+        Response response = RestRequests
                 .given()
                     .baseUri("https://reqres.in").basePath("/api/login")
                     .contentType(ContentType.JSON)
