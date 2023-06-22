@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import io.restassured.path.json.JsonPath;
+//import io.restassured.path.json.JsonPath;
 
 public class JSONHandle {
     public static void main(String[] args) throws Exception {
@@ -42,12 +42,15 @@ public class JSONHandle {
         request.put("email","Nitin@gmail.com");
         request.put("object",object);
 
-        JsonPath jsonPath = new JsonPath(request.toString());
-        jsonPath.prettyPrint();
-        FileWriter fos = new FileWriter(new File("data.json"));
-        fos.write(jsonPath.prettify());
-        fos.flush();
-        fos.close();
+//        JsonPath jsonPath = new JsonPath(request.toString());
+//
+//        jsonPath.prettyPrint();
+//        FileWriter fos = new FileWriter(new File("data.json"));
+//        fos.write(jsonPath.prettify());
+//        fos.flush();
+//        fos.close();
+//        System.out.println((Boolean) jsonPath.get("object.isSquare"));
+
 
     }
 }

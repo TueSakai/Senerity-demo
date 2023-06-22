@@ -7,6 +7,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
+import io.restassured.path.xml.XmlPath;
 import io.restassured.response.Response;
 import net.serenitybdd.core.Serenity;
 import net.serenitybdd.rest.RestRequests;
@@ -16,11 +17,14 @@ import org.junit.Assert;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import org.junit.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.*;
 import java.util.*;
 
 public class Step {
@@ -29,7 +33,7 @@ public class Step {
     public void GET_request_1() {
         Response response = RestRequests
                 .given()
-                .baseUri("https://reqres.in").basePath("/api/user?page=2")
+                    .baseUri("https://reqres.in").basePath("/api/user?page=2")
                 .when()
                     .get()
                 .then()
@@ -128,6 +132,44 @@ public class Step {
 
         catch (Exception | AssertionError e){
             System.out.println("__________________False__________________\n\n"+e);
+        }
+    }
+
+    @Test
+    @When("Test SOAP API GET")
+    public void GET_RESTAssuredSOAPAPI() throws Exception {
+        Response response = RestRequests
+                .given()
+                    .baseUri("http://restapi.adequateshop.com")
+                    .basePath("/api/Traveler")
+                    .contentType("application/xml")
+
+                .when()
+                    .get()
+                .then()
+                    .extract().response();
+
+        String responseBody = response.getBody().asString();
+        XmlPath jsXMLpath = new XmlPath(responseBody);
+        System.out.println(jsXMLpath.prettyPrint());
+
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document document = builder.parse(new InputSource(new StringReader(jsXMLpath.prettyPrint())));
+        Element rootElement = document.getDocumentElement();
+        System.out.println("\nName is: " + rootElement.getElementsByTagName("name").item(1).getTextContent());
+        System.out.println("\nID is: " + rootElement.getElementsByTagName("id").item(1).getTextContent());
+        System.out.println("\nEmail is: " + rootElement.getElementsByTagName("email").item(1).getTextContent());
+        System.out.println("\nAdderes is: " + rootElement.getElementsByTagName("adderes").item(1).getTextContent());
+
+        try {
+            Assert.assertEquals(rootElement.getElementsByTagName("name").item(1).getTextContent(),"AS");
+            assertThat(rootElement.getElementsByTagName("email").item(1).getTextContent(),is("qweqw@mail.ru"));
+            System.out.println("__________________PASS__________________");
+        }
+
+        catch (Exception | AssertionError e){
+            System.out.println("__________________FALSE__________________\n\n"+e);
         }
     }
 

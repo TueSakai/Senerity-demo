@@ -3,4 +3,5 @@ Feature: First test
   Scenario: Hello world
     Given GET demo request 1
     When POST demo request 1
+    When Test SOAP API GET
     Then POST demo request 2
