@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import org.junit.Assert;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -147,15 +148,16 @@ public class Step {
                 .when()
                     .get()
                 .then()
+                    .body("id",notNullValue())
                     .extract().response();
 
         String responseBody = response.getBody().asString();
         XmlPath jsXMLpath = new XmlPath(responseBody);
-        System.out.println(jsXMLpath.prettyPrint());
+        jsXMLpath.prettyPrint();
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
-        Document document = builder.parse(new InputSource(new StringReader(jsXMLpath.prettyPrint())));
+        Document document = builder.parse(new InputSource(new StringReader(jsXMLpath.prettify())));
         Element rootElement = document.getDocumentElement();
         System.out.println("\nName is: " + rootElement.getElementsByTagName("name").item(1).getTextContent());
         System.out.println("\nID is: " + rootElement.getElementsByTagName("id").item(1).getTextContent());
