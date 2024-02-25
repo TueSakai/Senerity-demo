@@ -1,5 +1,6 @@
 package StepDefinitions;
 
+import Function.ExcelDataReader;
 import com.google.gson.JsonObject;
 import io.cucumber.java.an.E;
 import io.cucumber.java.en.Given;
@@ -14,6 +15,7 @@ import net.serenitybdd.rest.RestRequests;
 import org.json.JSONObject;
 import org.junit.Assert;
 
+import static Variable.Variables.excelFilePath;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
